@@ -1,0 +1,7 @@
+accelerate
+bitsandbytes
+diffusers
+peft
+sentencepiece
+torch
+transformers
