@@ -16,4 +16,4 @@ image = pipe(
   guidance_scale=1.5
 ).images[0]
 
-image.save("output_bad.png")
+image.save("output_good.png")
