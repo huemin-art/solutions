@@ -895,19 +895,19 @@ class FluxKontextPipeline(
         height = height or self.default_sample_size * self.vae_scale_factor
         width = width or self.default_sample_size * self.vae_scale_factor
 
-        # original_height, original_width = height, width
-        # aspect_ratio = width / height
-        # width = round((max_area * aspect_ratio) ** 0.5)
-        # height = round((max_area / aspect_ratio) ** 0.5)
+        original_height, original_width = height, width
+        aspect_ratio = width / height
+        width = round((max_area * aspect_ratio) ** 0.5)
+        height = round((max_area / aspect_ratio) ** 0.5)
 
-        # multiple_of = self.vae_scale_factor * 2
-        # width = width // multiple_of * multiple_of
-        # height = height // multiple_of * multiple_of
+        multiple_of = self.vae_scale_factor * 2
+        width = width // multiple_of * multiple_of
+        height = height // multiple_of * multiple_of
 
-        # if height != original_height or width != original_width:
-        #     logger.warning(
-        #         f"Generation `height` and `width` have been adjusted to {height} and {width} to fit the model requirements."
-        #     )
+        if height != original_height or width != original_width:
+            logger.warning(
+                f"Generation `height` and `width` have been adjusted to {height} and {width} to fit the model requirements."
+            )
 
         # 1. Check inputs. Raise error if not correct
         self.check_inputs(
@@ -982,14 +982,14 @@ class FluxKontextPipeline(
             img = image[0] if isinstance(image, list) else image
             image_height, image_width = self.image_processor.get_default_height_width(img)
             aspect_ratio = image_width / image_height
-            # if _auto_resize:
-            #     # Kontext is trained on specific resolutions, using one of them is recommended
-            #     _, image_width, image_height = min(
-            #         (abs(aspect_ratio - w / h), w, h) for w, h in PREFERRED_KONTEXT_RESOLUTIONS
-            #     )
-            # image_width = image_width // multiple_of * multiple_of
-            # image_height = image_height // multiple_of * multiple_of
-            # image = self.image_processor.resize(image, image_height, image_width)
+            if _auto_resize:
+                # Kontext is trained on specific resolutions, using one of them is recommended
+                _, image_width, image_height = min(
+                    (abs(aspect_ratio - w / h), w, h) for w, h in PREFERRED_KONTEXT_RESOLUTIONS
+                )
+            image_width = image_width // multiple_of * multiple_of
+            image_height = image_height // multiple_of * multiple_of
+            image = self.image_processor.resize(image, image_height, image_width)
             image = self.image_processor.preprocess(image, image_height, image_width)
 
         # 4. Prepare latent variables
